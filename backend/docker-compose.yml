@@ -1,0 +1,58 @@
+services:
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    ports:
+      - "${MONGODB_BIND_ADDRESS:-127.0.0.1}:27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mosquitto:
+    build:
+      context: ./mosquitto
+    restart: unless-stopped
+    ports:
+      - "${MQTT_BIND_ADDRESS:-127.0.0.1}:1884:1883"
+    environment:
+      MQTT_USERNAME: ${MQTT_USERNAME:?Set MQTT_USERNAME in backend/.env}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:?Set MQTT_PASSWORD in backend/.env}
+    volumes:
+      - mosquitto_data:/mosquitto/data
+
+  api:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    ports:
+      - "${API_BIND_ADDRESS:-127.0.0.1}:${PORT:-5000}:5000"
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/binsight}
+      MONGODB_DB: ${MONGODB_DB:-binsight}
+      PORT: 5000
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:5000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      MQTT_URL: mqtt://mosquitto:1883
+      MQTT_USERNAME: ${MQTT_USERNAME:?Set MQTT_USERNAME in backend/.env}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:?Set MQTT_PASSWORD in backend/.env}
+      FILL_LEVEL_FULL_THRESHOLD: ${FILL_LEVEL_FULL_THRESHOLD:-90}
+      FILL_LEVEL_MODERATE_THRESHOLD: ${FILL_LEVEL_MODERATE_THRESHOLD:-50}
+      FILL_LEVEL_ALMOST_FULL_THRESHOLD: ${FILL_LEVEL_ALMOST_FULL_THRESHOLD:-70}
+      GAS_LEVEL_CRITICAL_THRESHOLD: ${GAS_LEVEL_CRITICAL_THRESHOLD:-601}
+      GAS_LEVEL_MODERATE_THRESHOLD: ${GAS_LEVEL_MODERATE_THRESHOLD:-401}
+      DEVICE_OFFLINE_TIMEOUT_SECONDS: ${DEVICE_OFFLINE_TIMEOUT_SECONDS:-5}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+volumes:
+  mongodb_data:
+  mosquitto_data:

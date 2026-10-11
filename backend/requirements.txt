@@ -1,0 +1,9 @@
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+pymongo>=4.9,<5
+paho-mqtt>=2,<3
+python-multipart>=0.0.12
+python-dotenv>=1,<2
+numpy>=1.26,<3
+pandas>=2.1,<4
+statsmodels>=0.14,<1

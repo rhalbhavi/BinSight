@@ -1,0 +1,79 @@
+name: binsight
+description: "IoT-Based Smart Waste Monitoring System"
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # FIREBASE
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  google_sign_in: ^6.1.0
+
+  # LOCAL STORAGE
+  shared_preferences: ^2.3.2
+  http: ^1.2.2
+  http_parser: ^4.1.2
+
+  # QR CODE
+  mobile_scanner: ^5.1.1
+  qr_flutter: ^4.1.0
+
+  # IMAGE HANDLING
+  image_picker: ^1.0.0
+  cached_network_image: ^3.2.3
+
+  # FONTS
+  google_fonts: ^6.2.1
+
+  # Mapping and Location
+  flutter_osm_plugin: ^0.8.0 # For location picking and geocoding
+  flutter_map: ^7.0.2 # For map display and interaction
+  latlong2: ^0.9.1
+  geolocator: ^13.0.2
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+flutter:
+  uses-material-design: true
+  assets: # images
+    - assets/logo.png
+    - assets/splash.png
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
