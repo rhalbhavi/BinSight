@@ -10,11 +10,17 @@
 
 ## Problem Statement / Objective
 
-Shared waste collection areas in apartments, campuses, institutions, and other public spaces often face garbage overflow, delayed disposal, and safety risks such as gas buildup or fire hazards due to a lack of real-time monitoring.
+Shared waste collection areas in apartment complexes, institutions, industrial parks, and other public spaces often face garbage overflow, delayed disposal, and safety risks such as gas buildup or fire hazards due to a lack of real-time monitoring.
 
-There is no integrated system that combines real-time garbage-level monitoring, air-quality and fire-hazard detection, bin and waste-zone location tracking, and alerts in a single platform. BinSight addresses this need by monitoring registered waste bins and notifying users through the application when readings or operational conditions need attention.
+<div align="center">
+  <img width=auto height="300" alt="Screenshot from 2026-10-11 15-09-26" src="https://github.com/user-attachments/assets/b646dc3b-6a02-40bb-9a37-41406f6ab7d7"/>
+</div>
 
-Its objectives are to:
+<p></p>
+
+There is no integrated system that combines real-time garbage-level monitoring, air-quality and fire-hazard detection, bin and waste-zone location tracking, and alerts in a single platform while providing simplified IoT device setup. BinSight addresses this need by monitoring registered waste bins and notifying users through the application when readings or operational conditions need attention.
+
+Its **objectives** are to:
 
 - Monitor bin fill level, estimated gas concentration, and fire indicators.
 - Help admin and worker teams identify bins and areas needing attention using maps and zone summaries.
@@ -34,12 +40,16 @@ Its objectives are to:
 - The backend validates incoming measurements, stores accepted telemetry, and updates the current bin status.
 - When an ultrasonic reading is invalid, gas and fire readings can still be reported while the backend retains the last valid fill reading.
 
+<img width=auto height="600" alt="image" src="https://github.com/user-attachments/assets/8230ddd5-009b-4d9e-bd3f-8ff417c365b2" />
+
 ### Alerts and notifications
 
 - The backend evaluates readings against configurable thresholds and records sensor alert transitions.
 - Open alerts can be reviewed and resolved in the application.
 - The application also supports operational notifications for reports, task updates, connectivity events, and critical reminders.
 - Dashboards periodically refresh device data; notifications are application-level, not a guarantee of SMS or push delivery.
+
+<img width="979" height="454" alt="Screenshot from 2026-10-11 14-55-54" src="https://github.com/user-attachments/assets/e13db645-95ac-4ec6-a179-55305762f702" />
 
 ### Administration and worker operations
 
@@ -50,11 +60,17 @@ Its objectives are to:
 - Issue reporting with optional photos and administrator report resolution.
 - Configurable notification preferences and profile pictures.
 
+<img width=auto height="350" alt="image" src="https://github.com/user-attachments/assets/9f285b84-a025-4377-beb9-bc922f140283" />
+<img width=auto height="400" alt="image" src="https://github.com/user-attachments/assets/fbadf41a-b279-4041-9353-26cd0659645a" />
+<img width=auto height="500" alt="image" src="https://github.com/user-attachments/assets/bd1ec377-f8f4-4a7d-a573-a0f38a950e87" />
+
 ### Maps and location
 
 - Map views can show bins, zones, and worker locations when location information is available.
 - Bin records can include coordinates and location descriptions.
 - Map tiles are provided by OpenStreetMap; map display requires network access.
+
+<img width=auto height="200" alt="image" src="https://github.com/user-attachments/assets/f10079b0-0c06-4680-a542-cad8c7272194" />
 
 ### Analytics
 
@@ -62,6 +78,8 @@ Its objectives are to:
 - The backend groups valid fill measurements into hourly history.
 - Overflow forecasts use an ARIMA model when enough history is available, with a recent-rate fallback for sparse data.
 - Gas-spike and fire-risk indicators are estimated from recent telemetry. Predictions are indicative and should not replace sensor validation or safety procedures.
+
+<img width=auto height="600" alt="image (1)" src="https://github.com/user-attachments/assets/44e938fe-5da8-4d19-aaf2-6e7027dfbb06" />
 
 ----
 
@@ -105,7 +123,7 @@ Flutter application
     └── Analytics, alerts, tasks, and reports
 ```
 
-The ESP32 publishes a telemetry sample at startup and approximately every two minutes while connected. It sends a retained connection heartbeat every two seconds. The backend considers a device offline when no heartbeat has been seen within the configured timeout, five seconds by default.
+The ESP32 publishes a telemetry sample at startup and approximately every 2 minutes while connected. It sends a retained connection heartbeat every 2 seconds. The backend considers a device offline when no heartbeat has been seen within the configured timeout, 5 seconds by default.
 
 ----
 
@@ -145,15 +163,15 @@ The ESP32 publishes a telemetry sample at startup and approximately every two mi
 ```text
 .
 ├── android/                       # Android application project
-├── assets/                        # Application images
+├── assets/                        # Application images, graphics, etc.
 ├── backend/
 │   ├── app.py                     # FastAPI application and MQTT ingestion
 │   ├── Dockerfile
-│   ├── docker-compose.yml          # MongoDB, Mosquitto, and API services
+│   ├── docker-compose.yml         # MongoDB, Mosquitto, API services
 │   ├── mosquitto/                 # MQTT broker configuration
 │   ├── requirements.txt
 │   ├── test_app.py
-│   └── MQTT_SETUP.md              # Broker, device, and deployment details
+│   └── MQTT_SETUP.md              # Broker, device, deployment details
 ├── firmware/
 │   ├── README.md
 │   └── esp32/device/
@@ -191,9 +209,8 @@ Default backend thresholds include:
 - Critical gas reading at 601 PPM or higher.
 - A detected flame is critical.
 
-Thresholds and connectivity settings can be configured through backend environment variables; see `backend/docker-compose.yml` and `backend/MQTT_SETUP.md` for the supported settings and defaults.
-
-MQ-135 PPM values depend on the sensor module, load resistance, warm-up, environmental conditions, and calibration. Calibrate the sensor for the deployment environment before using its readings for operational decisions. The ESP32’s GPIO pins are not 5 V tolerant; verify sensor output levels and use appropriate level shifting or voltage conditioning.
+MQ-135 PPM values depend on the sensor module, load resistance, warm-up, environmental conditions, and calibration. Calibration of the sensor for the deployment environment before using its readings for operational decisions is required.
+The ESP32’s GPIO pins are not 5 V tolerant; verify sensor output levels and use appropriate level shifting or voltage conditioning.
 
 ----
 
