@@ -14,18 +14,16 @@ const int DAYLIGHT_OFFSET_SEC = 0;
 // --- Pin Definitions ---
 const int TRIG_PIN = 13;
 const int ECHO_PIN = 12;
-
 // Flame Sensor (Analog Pin)
 const int FLAME_ANALOG_PIN = 32;
 const int FLAME_THRESHOLD = 600;
-
 // MQ-135 Gas Sensor Pin
 const int GAS_ANALOG_PIN = 33;
 
-// This build is powered through USB and has no battery-voltage sensor AS OF NOW
+// Currently powered through USB and has no battery-voltage sensor AS OF NOW - Will add later
 
 // --- Bin Configuration ---
-float initialBinDistance = 30.0;        // Fallback default
+float initialBinDistance = 30.0; // Fallback default height
 const float MIN_VALID_BIN_HEIGHT = 2.0;
 const float FULL_THRESHOLD_CM = 5.0;
 
@@ -166,14 +164,13 @@ void publishTelemetry(float fillLevel, int gasPpm, bool flameDetected, bool fill
              "{\"sample_id\":\"%s\",\"fill_level\":%.1f,\"fill_valid\":true,\"gas_level\":%d,\"flame\":%s}",
              sampleId, fillLevel, gasPpm, flameDetected ? "true" : "false");
   } else {
-    // Send a heartbeat and the working sensors even when the ultrasonic echo
-    // is missing. The backend retains this bin's last valid fill measurement.
+    // Send heartbeat and the working sensors even when ultrasonic echo is missing - Retains bin's last valid fill measurement
     snprintf(payload, sizeof(payload),
              "{\"sample_id\":\"%s\",\"fill_valid\":false,\"gas_level\":%d,\"flame\":%s}",
              sampleId, gasPpm, flameDetected ? "true" : "false");
   }
 
-  // Retain the newest sample so FastAPI can recover it if its MQTT listener restarts.
+  // Retain the newest sample so FastAPI can recover it if its MQTT listener restarts
   if (mqttClient.publish(topic, payload, true)) {
     telemetryPending = false;
     Serial.printf("[MQTT] Published %s %s\n", topic, payload);
@@ -194,15 +191,14 @@ void setup() {
   WiFi.setAutoReconnect(true);
   WiFi.persistent(false);
   bootSessionId = esp_random();
-  // MQTT uses the registered MongoDB bin_id so telemetry updates that bin.
+  // MQTT uses the registered MongoDB bin_id so telemetry updates that bin
   hardwareDeviceId = DEVICE_ID;
   Serial.printf("Registered bin ID: %s\n", hardwareDeviceId.c_str());
   if (hardwareDeviceId.isEmpty() || hardwareDeviceId == "YOUR_REGISTERED_BIN_ID") {
     Serial.println("[CONFIG] Set DEVICE_ID in secrets.h to this device's registered bin_id.");
   }
 
-  // Store each registered bin's empty-height baseline separately in ESP32 NVS.
-  // This keeps a reconnect or power cycle from recalibrating against new waste.
+  // Store each registered bin's empty-height baseline separately in ESP32 NVS
   uint32_t deviceIdHash = 2166136261UL;
   for (size_t i = 0; i < hardwareDeviceId.length(); i++) {
     deviceIdHash ^= static_cast<uint8_t>(hardwareDeviceId[i]);
@@ -238,7 +234,7 @@ void setup() {
 
   Serial.println("\n--- ESP32 Multi-Sensor System Initialized ---");
 
-  // Reuse the first baseline for this registered bin across reconnects and reboots.
+  // Reuse the first baseline for this registered bin across reconnects/reboots
   const float savedBinHeight = devicePreferences.getFloat(binHeightPreferenceKey, 0.0f);
   if (savedBinHeight >= MIN_VALID_BIN_HEIGHT && isfinite(savedBinHeight)) {
     initialBinDistance = savedBinHeight;
@@ -252,7 +248,7 @@ void setup() {
     bool initialDistanceValid = false;
     float initDistance = readFilteredDistanceCm(initialDistanceValid);
 
-    // Use the median valid echo as a one-time empty-bin baseline.
+    // Use the median valid echo as a one-time empty-bin baseline
     if (initialDistanceValid && initDistance >= MIN_VALID_BIN_HEIGHT) {
       initialBinDistance = initDistance;
       Serial.print("[Calibration] Initial Bin Distance set to: ");
@@ -287,8 +283,7 @@ void loop() {
     }
   }
 
-  // A battery power cycle or network interruption can lose the first sample.
-  // Take and publish a fresh reading as soon as MQTT has returned.
+  // Take and publish a fresh sensor reading as soon as MQTT has returned
   if (mqttClient.connected() && telemetryPending &&
       currentMillis - lastPendingRetry >= MQTT_RETRY_INTERVAL) {
     lastPendingRetry = currentMillis;
@@ -326,8 +321,7 @@ void readAllSensors() {
   float fillPercentage = 0.0;
 
   if (!ultrasonicValid) {
-    // When the sensor times out at 85-95% full, it's inside the blind zone (<2cm).
-    // Treat it as completely full (100%) instead of throwing a hardware error.
+    // When the sensor times out at 85-95% full, it's inside the blind zone (<2cm) - Treat it as completely full (100%) instead of throwing hardware error
     fillPercentage = 100.0;
     distanceCm = 0.0;
     ultrasonicValid = true;
@@ -383,8 +377,7 @@ void readAllSensors() {
   float r0 = 12.5; // Clean air baseline resistance
   float ratio = rS / r0;
   float ppm = 116.6020682 * pow(ratio, -2.76903487);
-  // Send the same calculated PPM value printed below. Bound extreme readings
-  // so the integer telemetry field remains valid and useful to the app.
+  // Send the same calculated PPM value printed below. Bound extreme readings so the integer telemetry field remains valid and useful to the app
   int gasPpm = (int)roundf(fminf(fmaxf(ppm, 0.0f), 100000.0f));
 
   Serial.print("[Gas Sensor]   Raw: ");
