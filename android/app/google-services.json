@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "350171947927",
-    "project_id": "binsight-d0731",
-    "storage_bucket": "binsight-d0731.firebasestorage.app"
+    "project_number": "PROJECT_NUMBER",
+    "project_id": "PROJECT_ID",
+    "storage_bucket": "STORAGE_BUCKET"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:350171947927:android:9ef73e3041d5ec607bdad2",
+        "mobilesdk_app_id": "MOBILESDK_APP_IF",
         "android_client_info": {
           "package_name": "com.example.binsight"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB8ZFjVNtc6vHzFvAmv-A_eKDrxl9Y6Zv0"
+          "current_key": "CURRENT_KEY"
         }
       ],
       "services": {
