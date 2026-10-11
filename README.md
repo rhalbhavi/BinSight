@@ -170,104 +170,6 @@ The ESP32 publishes a telemetry sample at startup and approximately every two mi
 
 ----
 
-## Getting Started
-
-### Prerequisites
-
-Install the tools needed for the parts of the project you intend to run:
-
-- Flutter and a Dart SDK compatible with the version specified in `pubspec.yaml`.
-- Python 3.12 or a compatible Python version for the backend.
-- Docker and the Docker Compose plugin for the containerized backend.
-- An Arduino-compatible ESP32 board setup for device firmware.
-- A Firebase project configured for the application platforms you plan to use.
-
-### Configure and start the backend
-
-From the repository root, create the backend environment file:
-
-```sh
-cp backend/.env.example backend/.env
-```
-
-Edit `backend/.env` before starting services:
-
-- Set a strong, unique `MQTT_PASSWORD`.
-- Confirm the `MQTT_USERNAME`.
-- Configure `CORS_ORIGINS` for the web application origin when applicable.
-- Choose appropriate bind addresses for the API, broker, and MongoDB. The defaults bind services to loopback for local development.
-
-Start the backend, MongoDB, and Mosquitto:
-
-```sh
-docker compose --env-file backend/.env -f backend/docker-compose.yml up -d --build
-```
-
-The API is available at `http://localhost:5000`. FastAPI’s interactive API documentation is available at `http://localhost:5000/docs`.
-
-To stop the local services:
-
-```sh
-docker compose --env-file backend/.env -f backend/docker-compose.yml down
-```
-
-MongoDB data is stored in a Docker volume. To remove that data as well, explicitly remove the `mongodb_data` volume; doing so deletes the persisted local database.
-
-#### Run the backend without Docker
-
-Start MongoDB and Mosquitto separately, then configure `backend/.env` with reachable addresses. For a typical local setup, the backend process needs a MongoDB URI such as `mongodb://localhost:27017/binsight` and an MQTT URL such as `mqtt://localhost:1884`.
-
-From the repository root:
-
-```sh
-python3 -m venv .venv
-.venv/bin/pip install -r backend/requirements.txt
-.venv/bin/uvicorn backend.app:app --host 0.0.0.0 --port 5000
-```
-
-### Configure and run the Flutter application
-
-Install Flutter dependencies:
-
-```sh
-flutter pub get
-```
-
-The application uses `lib/firebase_options.dart` for Firebase initialization. Configure the Firebase project and platform-specific Firebase files for your deployment before running the app.
-
-Run the application with the default development API URL:
-
-```sh
-flutter run
-```
-
-The default API URL is `http://localhost:5000` for web and desktop, and `http://10.0.2.2:5000` for the Android emulator. To set a different API URL, use a Dart define:
-
-```sh
-flutter run --dart-define=API_BASE_URL=http://YOUR_API_HOST:5000
-```
-
-For a physical device, `YOUR_API_HOST` must be an address reachable from that device; `localhost` refers to the device itself. For a hosted web app, serve the API over HTTPS and configure the backend CORS origins for the exact web application origin.
-
-### Set up an ESP32 device
-
-1. Register a bin in the application and note its exact `bin_id`.
-2. Copy the example settings file:
-
-   ```sh
-   cp firmware/esp32/device/secrets.example.h firmware/esp32/device/secrets.h
-   ```
-
-3. Edit `secrets.h` with the Wi-Fi credentials, MQTT broker address and port, MQTT credentials, and the registered `DEVICE_ID`.
-4. Install the Arduino `PubSubClient` library, select the appropriate ESP32 board and port, and flash `device.ino`.
-5. Check the device’s serial output and confirm telemetry appears in the application.
-
-Keep `secrets.h` private. It contains device credentials and is excluded from version control. Each physical device should use the ID of its registered bin.
-
-For a device outside the development computer’s network, configure a reachable private or VPN broker address. The current firmware and backend MQTT setup use plain MQTT; do not expose the broker publicly. See [firmware/README.md](firmware/README.md) and [backend/MQTT_SETUP.md](backend/MQTT_SETUP.md) for additional network and hardware guidance.
-
-----
-
 ## Sensor Data and Alert Behavior
 
 Telemetry includes:
@@ -314,6 +216,8 @@ The FastAPI service provides endpoints for application setup, device data, repor
 | `PATCH /tasks/{task_id}/status` | Update a task’s status |
 
 The complete API schema is available at `/docs` while the backend is running.
+
+----
 
 ## Testing
 
