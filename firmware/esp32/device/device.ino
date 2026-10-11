@@ -22,8 +22,7 @@ const int FLAME_THRESHOLD = 600;
 // MQ-135 Gas Sensor Pin
 const int GAS_ANALOG_PIN = 33;
 
-// This build is powered through USB and has no battery-voltage sensor.
-// A USB power bank battery percentage cannot be measured from the ESP32 USB input.
+// This build is powered through USB and has no battery-voltage sensor AS OF NOW
 
 // --- Bin Configuration ---
 float initialBinDistance = 30.0;        // Fallback default
