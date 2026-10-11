@@ -135,7 +135,7 @@ The ESP32 publishes a telemetry sample at startup and approximately every 2 minu
 | | HC-SR04 Ultrasonic Sensor | <img width=auto height="100" alt="Screenshot from 2026-10-11 13-58-34" src="https://github.com/user-attachments/assets/7fc33e09-d042-4484-984c-07d6ff300002"/> |
 | | MQ-135 Air Quality Sensor | <img width=auto height="100" alt="Screenshot from 2026-10-11 14-01-13" src="https://github.com/user-attachments/assets/4b9d1e39-e705-4121-8370-5607c96fa375"/> |
 | | KY-026 Flame Sensor | <img width=auto height="100" alt="Screenshot from 2026-10-11 14-06-58" src="https://github.com/user-attachments/assets/cf056ac5-7d15-4a05-a023-498a37a51b33"/> |
-| **Firmware** | Arduino Framework | ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=flat&logo=arduino&logoColor=white) |
+| **Firmware** | Arduino IDE/Framework | ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=flat&logo=arduino&logoColor=white) |
 | | PubSubClient | ![PubSubClient](https://img.shields.io/badge/PubSubClient-00979D?style=flat) |
 | **Mobile Application** | Flutter | ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat&logo=flutter&logoColor=white) |
 | | Dart | ![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat&logo=dart&logoColor=white) |
